@@ -23,7 +23,7 @@ public class Chat {
     @ManyToOne(cascade = CascadeType.ALL)
     private ChatUsers secondChatUser ;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private List<Message> messages = new ArrayList<Message>();
 
 
