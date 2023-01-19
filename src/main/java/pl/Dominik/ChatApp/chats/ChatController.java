@@ -16,7 +16,8 @@ import java.util.List;
 
 //@RequestMapping("/chats")
 @RestController
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials="true")
+@RequestMapping("/chats")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ChatController {
 
     private final ChatRepository repository;
@@ -27,13 +28,13 @@ public class ChatController {
         this.template = template;
     }
 
-    @PostMapping("/chats/addchat")
+    @PostMapping("/addchat")
     public ResponseEntity<?> addChat(@RequestBody Chat chat){
         repository.save(chat);
         return ResponseEntity.ok(chat.getId());
     }
 
-    @GetMapping("/chats/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getChats(@PathVariable String id){
     List<Chat> chats = repository.findAllByFirstChatUser_Email(id);
     List<Chat> chatsWithIndex2 = repository.findAllBySecondChatUser_Email(id);
@@ -45,7 +46,7 @@ public class ChatController {
         return ResponseEntity.ok(chatResponses);
     }
 
-    @PostMapping("/chats/addmessage/{chatid}")
+    @PostMapping("/addmessage/{chatid}")
     public ResponseEntity<?> addMessage(@PathVariable int chatid, @RequestBody Message message){
        Chat chat = repository.findChatById(chatid).orElseThrow();
         chat.getMessages().add(message);
@@ -64,7 +65,7 @@ public class ChatController {
     }
 
 
-    @PatchMapping("/chats/lastmessage/{chatid}")
+    @PatchMapping("/lastmessage/{chatid}")
     public ResponseEntity<?> lastMessageUpdate(@PathVariable int chatid, @RequestBody Chat requestChat){
         Chat chat = repository.findChatById(chatid).orElseThrow();
         chat.setLastMessageUnread(requestChat.isLastMessageUnread());
@@ -74,13 +75,13 @@ public class ChatController {
         return ResponseEntity.ok(chat);
     }
 
-    @GetMapping("/chats/messages/{chatId}")
+    @GetMapping("/messages/{chatId}")
     public ResponseEntity<?> getMessages(@PathVariable int chatId){
         Chat chat = repository.findChatById(chatId).orElseThrow();
         return ResponseEntity.ok(chat.getMessages());
     }
 
-    @PatchMapping("/chats/setlastmessageunreadtofalse/{chatId}")
+    @PatchMapping("/setlastmessageunreadtofalse/{chatId}")
     public ResponseEntity<Chat> setLastMessageUnreadToFalse(@PathVariable int chatId){
         Chat chat = repository.findChatById(chatId).orElseThrow();
         chat.setLastMessageUnread(false);

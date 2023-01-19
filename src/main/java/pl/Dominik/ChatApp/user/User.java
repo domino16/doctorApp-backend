@@ -38,8 +38,6 @@ public class User implements UserDetails {
 
     private boolean doctor;
 
-    private int unReadChatsCounter;
-
     private int visitNotificationsNumber;
 
 
@@ -52,14 +50,13 @@ public class User implements UserDetails {
 
     }
 
-    public User(String email, String password, String firstName, String lastName, String photoUrl, boolean doctor, int unReadChatsCounter, int visitNotificationsNumber) {
+    public User(String email, String password, String firstName, String lastName, String photoUrl, boolean doctor, int visitNotificationsNumber) {
         this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.photoUrl = photoUrl;
         this.doctor = doctor;
-        this.unReadChatsCounter = unReadChatsCounter;
         this.visitNotificationsNumber = visitNotificationsNumber;
     }
 
@@ -115,13 +112,7 @@ public class User implements UserDetails {
         this.doctor = doctor;
     }
 
-    public int getUnReadChatsCounter() {
-        return unReadChatsCounter;
-    }
 
-    public void setUnReadChatsCounter(int unReadChatsCounter) {
-        this.unReadChatsCounter = unReadChatsCounter;
-    }
 
     public int getVisitNotificationsNumber() {
         return visitNotificationsNumber;

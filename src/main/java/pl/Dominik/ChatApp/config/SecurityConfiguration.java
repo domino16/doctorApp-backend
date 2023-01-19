@@ -19,6 +19,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.io.IOException;
 
@@ -50,48 +53,26 @@ private JwtAuthenticationEntryPoint unauthorizedHandler;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-//
+                .cors().and()
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-//                .requestMatchers("/api/v1/auth/**")
-                .requestMatchers("/**")
-                .permitAll();
-//                .anyRequest()
-//                .authenticated()
-//                .and()
-//                .sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and()
-//                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
-//                .and()
-//                .authenticationProvider(authenticationProvider)
-//                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .requestMatchers("/api/v1/auth/**","/user/user/**")
+                .permitAll()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
+                .and()
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
 
 }
-//@Component
-//class CustomAccessDeniedHandler implements AccessDeniedHandler {
-//
-//    @Override
-//    public void handle(HttpServletRequest request, HttpServletResponse response,
-//                       AccessDeniedException exc) throws IOException {
-//        response.addHeader("access_denied_reason", "not_authorized");
-//        response.sendError(405, "Access Denied");
-////        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"ndqiew");
-//    }
-//}
 
-//@Component
-//class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
-//    @Override
-//    public void commence(HttpServletRequest request, HttpServletResponse response,
-//                         AuthenticationException authException) throws IOException {
-//        response.addHeader("access_denied_reason", "authentication_required");
-//        response.sendError(402, authException.getMessage());
-//         = new ResponseEntity<>(authException.getMessage(),HttpStatus.BAD_REQUEST);
-//    }
-//}

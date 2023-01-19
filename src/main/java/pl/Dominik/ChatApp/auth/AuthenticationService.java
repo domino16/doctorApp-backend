@@ -27,16 +27,11 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse register(RegisterRequest request) {
-//        var user = User.builder()
-//                .firstname(request.getFirstname())
-//                .lastname(request.getLastname())
-//                .email(request.getEmail())
-//                .password(passwordEncoder.encode(request.getPassword()))
-//                .build();
+
         if(repository.findByEmail(request.getEmail()).isPresent()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "EMAIL_EXISTS");
         }
-        User user = new User(request.getEmail(), passwordEncoder.encode(request.getPassword()),request.getFirstName(),request.getLastName(),request.getPhotoUrl(), request.isDoctor(), request.getUnReadChatsCounter(),request.getVisitNotificationsNumber());
+        User user = new User(request.getEmail(), passwordEncoder.encode(request.getPassword()),request.getFirstName(),request.getLastName(),request.getPhotoUrl(), request.isDoctor(),request.getVisitNotificationsNumber());
         repository.save(user);
         var jwtToken = jwtService.generateToken(user);
         return new AuthenticationResponse(jwtToken, request.getEmail(),"3600");
@@ -53,9 +48,6 @@ public class AuthenticationService {
         User user = repository.findByEmail(request.getEmail())
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.BAD_REQUEST,"users not found"));
         var jwtToken = jwtService.generateToken(user);
-//        return AuthenticationResponse.builder()
-//                .token(jwtToken)
-//                .build();
 
         AuthenticationResponse response = new AuthenticationResponse(jwtToken, request.getEmail(),"3600");
         return response;
