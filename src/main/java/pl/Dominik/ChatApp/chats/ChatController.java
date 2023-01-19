@@ -1,7 +1,9 @@
 package pl.Dominik.ChatApp.chats;
 
+import org.hibernate.mapping.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 //@RequestMapping("/chats")
@@ -38,7 +41,7 @@ public class ChatController {
     ArrayList<ChatResponse> chatResponses = new ArrayList<ChatResponse>();
     ArrayList<String> a = new ArrayList<String>();
         chats.forEach(chat ->   chatResponses.add
-                (new ChatResponse(chat.getId(), new ArrayList<>(Arrays.asList(chat.getFirstChatUser().getEmail(),chat.getSecondChatUser().getEmail())),new ArrayList<>(Arrays.asList(chat.getFirstChatUser(),chat.getSecondChatUser())),true )));
+                (new ChatResponse(chat.getId(), new ArrayList<>(Arrays.asList(chat.getFirstChatUser().getEmail(),chat.getSecondChatUser().getEmail())),new ArrayList<>(Arrays.asList(chat.getFirstChatUser(),chat.getSecondChatUser())),chat.isLastMessageUnread(), chat.getLastMessage() )));
         return ResponseEntity.ok(chatResponses);
     }
 
@@ -49,14 +52,15 @@ public class ChatController {
         repository.save(chat);
         return ResponseEntity.ok(chat.getMessages());
     }
+
     //    @SendTo("/message/greetings")
-    @MessageMapping("/chat")
-    public void sendMessage(String message){
+    @MessageMapping("/chat/{chatId}")
+    public void sendMessage(Message message, @DestinationVariable int chatId){
         System.out.println(message);
-        Chat chat = this.repository.findChatById(1).orElseThrow();
-        chat.getMessages().add(new Message(null,message,null));
+        Chat chat = this.repository.findChatById(chatId).orElseThrow();
+        chat.getMessages().add(message);
         repository.save(chat);
-        this.template.convertAndSend("/topic/messages",  message);
+        this.template.convertAndSend("/topic/messages/" + chatId,  message);
     }
 
 
@@ -71,13 +75,13 @@ public class ChatController {
     }
 
     @GetMapping("/chats/messages/{chatId}")
-    public ResponseEntity<?> getMesssages(@PathVariable int chatId){
+    public ResponseEntity<?> getMessages(@PathVariable int chatId){
         Chat chat = repository.findChatById(chatId).orElseThrow();
         return ResponseEntity.ok(chat.getMessages());
     }
 
     @PatchMapping("/chats/setlastmessageunreadtofalse/{chatId}")
-    public ResponseEntity<Chat> setLastMessageUnreadToFasle(@PathVariable int chatId){
+    public ResponseEntity<Chat> setLastMessageUnreadToFalse(@PathVariable int chatId){
         Chat chat = repository.findChatById(chatId).orElseThrow();
         chat.setLastMessageUnread(false);
         repository.save(chat);
