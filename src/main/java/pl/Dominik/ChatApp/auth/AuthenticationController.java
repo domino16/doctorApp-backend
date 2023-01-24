@@ -8,7 +8,7 @@ import pl.Dominik.ChatApp.user.UserRepository;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://chat-5-96444.web.app")
 public class AuthenticationController {
 
     private final AuthenticationService service;

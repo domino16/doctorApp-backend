@@ -8,7 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://chat-5-96444.web.app")
 public class UserController {
 
     private final UserRepository userRepository;
